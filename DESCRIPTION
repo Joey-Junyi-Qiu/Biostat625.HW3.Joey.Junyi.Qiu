@@ -9,3 +9,5 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu
+BugReports: https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu/issues
