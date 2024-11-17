@@ -1,13 +1,16 @@
 Package: Biostat625.HW3.Joey.Junyi.Qiu
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Biostat625.HW3.Joey.Junyi.Qiu Logistic Regression Package
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Joey.Junyi.Qiu
+Maintainer: Joey.Junyi.Qiu <junyiqiu@umich.edu>
+Description: Functions for logistic regression analysis using Rcpp.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: Rcpp
+LinkingTo: Rcpp
 URL: https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu
 BugReports: https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu/issues
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
