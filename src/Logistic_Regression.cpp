@@ -8,10 +8,8 @@ using namespace Rcpp;
 //' @param beta A numeric vector of coefficients for the logistic regression model.
 //' @return A numeric vector of predicted probabilities.
 //' @export
-
-
 // [[Rcpp::export]]
-NumericVector J_logistic(NumericMatrix X, NumericVector beta) {
+NumericVector logistic(NumericMatrix X, NumericVector beta) {
   // Get the number of rows in matrix X (i.e., the number of observations)
   int n = X.nrow();
 
