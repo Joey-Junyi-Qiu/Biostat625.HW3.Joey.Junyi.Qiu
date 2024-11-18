@@ -1,5 +1,20 @@
 # Biostat625.HW3.Joey.Junyi.Qiu
 
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Installation](#installation)
+   - [From GitHub](#from-github)
+3. [Functions and Usage](#functions-and-usage)
+   - [J_logistic_fit()](#1-j_logistic_fit)
+   - [J_logistic()](#2-j_logistic)
+   - [J_log_likelihood()](#3-j_log_likelihood)
+4. [Example](#example)
+5. [Testing](#Testing)
+6. [Contributing](#contributing)
+7. [License](#license)
+8. [Acknowledgments](#acknowledgments)
+
 ## Overview
 
 `Biostat625.HW3.Joey.Junyi.Qiu` is an R package that provides custom logistic regression functions. The package includes the following key functions:
@@ -117,5 +132,11 @@ This package is licensed under the MIT License. See the `LICENSE` file for more 
 ## Acknowledgments
 
 This package was developed for educational purposes as part of the Biostat 625 course at the University of Michigan. Special thanks to the instructors for their support and feedback.
+
+
+
+
+
+
 
 
