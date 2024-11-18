@@ -1,0 +1,102 @@
+---
+title: "Introduction"
+author: "Joey"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Biostat625.HW3.Joey.Junyi.Qiu)
+```
+
+## Introduction
+
+This vignette provides a detailed introduction to the custom logistic regression functions included in the `Biostat625.HW3.Joey.Junyi.Qiu` R package. We will go through the purpose of each function, their parameters, and how to use them. Additionally, we will provide examples to demonstrate their usage and output.
+
+## Function Overview
+
+The custom logistic regression functions available in the package include:
+
+1. `J_logistic_fit()`: Fits a logistic regression model using Newton's method.
+2. `J_logistic()`: Predicts probabilities using the fitted logistic regression model.
+3. `J_log_likelihood()`: Computes the negative log-likelihood for a logistic regression model.
+
+Below, we describe each of these functions in detail.
+
+## `J_logistic_fit()`
+
+### Description
+`J_logistic_fit()` is used to fit a logistic regression model using Newton's method. It calculates the optimal coefficients (including intercept) that best fit the data.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`y`**: A numeric vector of binary outcomes (0 or 1) for each observation.
+- **`iterations`**: An integer representing the maximum number of iterations for Newton's method (default: 1000).
+- **`tol`**: A numeric value representing the convergence tolerance (default: 1e-6).
+
+### Example
+```{r fit-example}
+
+# Load dataset
+
+data("PimaIndiansDiabetes")
+
+# Prepare feature matrix and response vector
+X <- as.matrix(PimaIndiansDiabetes[, -ncol(PimaIndiansDiabetes)])
+y <- as.numeric(PimaIndiansDiabetes$diabetes == "pos")
+
+# Fit logistic regression model using custom function
+fitted_beta <- J_logistic_fit(X, y)
+print(fitted_beta)
+```
+
+## `J_logistic()`
+
+### Description
+`J_logistic()` is used to predict probabilities for each observation using a fitted logistic regression model.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`beta`**: A numeric vector of coefficients for the logistic regression model (including intercept).
+
+### Example
+```{r predict-example}
+# Predict probabilities using the fitted model
+predicted_probs <- J_logistic(X, fitted_beta)
+print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
+```
+
+## `J_log_likelihood()`
+
+### Description
+`J_log_likelihood()` computes the negative log-likelihood for a logistic regression model given the feature matrix, target vector, and model coefficients.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`y`**: A numeric vector of binary outcomes (0 or 1) for each observation.
+- **`beta`**: A numeric vector of regression coefficients (including intercept).
+
+### Example
+```{r loglik-example}
+# Calculate the negative log-likelihood for the fitted model
+log_likelihood_value <- J_log_likelihood(X, y, fitted_beta)
+print(log_likelihood_value)
+```
+
+## Summary
+
+This vignette provides an overview of the custom logistic regression functions available in the `Biostat625.HW3.Joey.Junyi.Qiu` package. The functions allow users to fit a logistic regression model, make predictions, and calculate log-likelihood.
+
+
+
+

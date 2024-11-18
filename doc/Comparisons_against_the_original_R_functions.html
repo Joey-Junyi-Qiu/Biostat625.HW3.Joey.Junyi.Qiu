@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Joey" />
+
+
+<title>Comparisons_against_the_original_R_functions</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Comparisons_against_the_original_R_functions</h1>
+<h4 class="author">Joey</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Biostat625.HW3.Joey.Junyi.Qiu)</span></code></pre></div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This vignette provides a comparison between custom logistic
+regression functions, implemented using Newton’s method, and R’s
+built-in logistic regression function (<code>glm</code>). Specifically,
+we will compare:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Accuracy</strong>: Using <code>all.equal()</code> to compare
+the coefficients obtained from the custom functions and
+<code>glm</code>.</li>
+<li><strong>Efficiency</strong>: Benchmarking the computation time using
+<code>bench::mark()</code>.</li>
+</ol>
+<p>The custom functions being evaluated include: -
+<code>J_logistic_fit()</code>: Fits a logistic regression model using
+Newton’s method. - <code>J_logistic()</code>: Predicts probabilities
+using the fitted logistic regression model. -
+<code>J_log_likelihood()</code>: Computes the negative log-likelihood
+for the model.</p>
+</div>
+<div id="loading-required-packages" class="section level2">
+<h2>Loading Required Packages</h2>
+<p>We will use the following packages:</p>
+<ul>
+<li><strong><code>Biostat625.HW3.Joey.Junyi.Qiu</code></strong>: The
+custom R package containing logistic regression functions.</li>
+<li><strong><code>bench</code></strong>: For benchmarking computational
+efficiency.</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Load required packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(Biostat625.HW3.Joey.Junyi.Qiu)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;bench&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;bench&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="fu">library</span>(bench)</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;bench&#39; was built under R version 4.4.2</span></span></code></pre></div>
+</div>
+<div id="dataset" class="section level2">
+<h2>Dataset</h2>
+<p>We will use the <code>PimaIndiansDiabetes</code> dataset, which has
+been integrated into our package. This dataset is commonly used for
+binary classification problems.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Load the dataset</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co"># PimaIndiansDiabetes data is included in our package</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;PimaIndiansDiabetes&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># Prepare feature matrix (X) and target vector (y)</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(PimaIndiansDiabetes[, <span class="sc">-</span><span class="fu">ncol</span>(PimaIndiansDiabetes)])  <span class="co"># All columns except the last one</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(PimaIndiansDiabetes<span class="sc">$</span>diabetes <span class="sc">==</span> <span class="st">&quot;pos&quot;</span>)  <span class="co"># Convert &#39;pos&#39; to 1 and &#39;neg&#39; to 0</span></span></code></pre></div>
+</div>
+<div id="j_logistic_fit" class="section level2">
+<h2><code>J_logistic_fit()</code></h2>
+<div id="description" class="section level3">
+<h3>Description</h3>
+<p><code>J_logistic_fit()</code> is used to fit a logistic regression
+model using Newton’s method. It calculates the optimal coefficients
+(including intercept) that best fit the data.</p>
+</div>
+<div id="parameters" class="section level3">
+<h3>Parameters</h3>
+<ul>
+<li><strong><code>X</code></strong>: A numeric matrix where each row
+represents an observation and each column represents a feature.</li>
+<li><strong><code>y</code></strong>: A numeric vector of binary outcomes
+(0 or 1) for each observation.</li>
+<li><strong><code>iterations</code></strong>: An integer representing
+the maximum number of iterations for Newton’s method (default:
+1000).</li>
+<li><strong><code>tol</code></strong>: A numeric value representing the
+convergence tolerance (default: 1e-6).</li>
+</ul>
+</div>
+<div id="example" class="section level3">
+<h3>Example</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Fit logistic regression model using custom function</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>custom_beta <span class="ot">&lt;-</span> <span class="fu">J_logistic_fit</span>(X, y)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="fu">print</span>(custom_beta)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [1] -8.4046963669  0.1231822984  0.0351637146 -0.0132955469  0.0006189644</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; [6] -0.0011916990  0.0897009700  0.9451797406  0.0148690047</span></span></code></pre></div>
+</div>
+<div id="comparison-with-glm" class="section level3">
+<h3>Comparison with <code>glm()</code></h3>
+<p>We also fit the logistic regression model using R’s built-in
+<code>glm()</code> function for comparison.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Fit logistic regression using glm()</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>model_glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(y <span class="sc">~</span> X, <span class="at">family =</span> binomial)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Extract coefficients from the model</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>beta_glm <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">coef</span>(model_glm))</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="fu">print</span>(beta_glm)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; [1] -8.4046963669  0.1231822984  0.0351637146 -0.0132955469  0.0006189644</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; [6] -0.0011916990  0.0897009700  0.9451797406  0.0148690047</span></span></code></pre></div>
+<p>We compare the coefficients obtained from
+<code>J_logistic_fit()</code> and <code>glm()</code> using
+<code>all.equal()</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Compare the coefficients from custom logistic regression and glm</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>coefficients_accuracy_comparison <span class="ot">&lt;-</span> <span class="fu">all.equal</span>(custom_beta, beta_glm, <span class="at">tolerance =</span> <span class="fl">1e-5</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">print</span>(coefficients_accuracy_comparison)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+</div>
+<div id="j_logistic" class="section level2">
+<h2><code>J_logistic()</code></h2>
+<div id="description-1" class="section level3">
+<h3>Description</h3>
+<p><code>J_logistic()</code> is used to predict probabilities for each
+observation using a fitted logistic regression model.</p>
+</div>
+<div id="parameters-1" class="section level3">
+<h3>Parameters</h3>
+<ul>
+<li><strong><code>X</code></strong>: A numeric matrix where each row
+represents an observation and each column represents a feature.</li>
+<li><strong><code>beta</code></strong>: A numeric vector of coefficients
+for the logistic regression model (including intercept).</li>
+</ul>
+</div>
+<div id="example-1" class="section level3">
+<h3>Example</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Predict probabilities using the fitted model</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>predicted_probs <span class="ot">&lt;-</span> <span class="fu">J_logistic</span>(X, custom_beta)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">print</span>(predicted_probs[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])  <span class="co"># Print the first 10 predicted probabilities</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt;  [1] 0.72172655 0.04864161 0.79670208 0.04162486 0.90218390 0.14663156</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt;  [7] 0.06657752 0.64456958 0.70935795 0.03633584</span></span></code></pre></div>
+</div>
+<div id="comparison-with-predict-from-glm" class="section level3">
+<h3>Comparison with <code>predict()</code> from <code>glm()</code></h3>
+<p>We also compare the predicted probabilities from
+<code>J_logistic()</code> and R’s built-in <code>predict()</code>
+function.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Predict probabilities using glm()</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>predicted_probs_glm <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">predict</span>(model_glm, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co"># Compare the predicted probabilities from custom logistic and glm</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>prob_accuracy_comparison <span class="ot">&lt;-</span> <span class="fu">all.equal</span>(predicted_probs, predicted_probs_glm, <span class="at">tolerance =</span> <span class="fl">1e-5</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="fu">print</span>(prob_accuracy_comparison)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+</div>
+<div id="j_log_likelihood" class="section level2">
+<h2><code>J_log_likelihood()</code></h2>
+<div id="description-2" class="section level3">
+<h3>Description</h3>
+<p><code>J_log_likelihood()</code> computes the negative log-likelihood
+for a logistic regression model given the feature matrix, target vector,
+and model coefficients.</p>
+</div>
+<div id="parameters-2" class="section level3">
+<h3>Parameters</h3>
+<ul>
+<li><strong><code>X</code></strong>: A numeric matrix where each row
+represents an observation and each column represents a feature.</li>
+<li><strong><code>y</code></strong>: A numeric vector of binary outcomes
+(0 or 1) for each observation.</li>
+<li><strong><code>beta</code></strong>: A numeric vector of regression
+coefficients (including intercept).</li>
+</ul>
+</div>
+<div id="example-2" class="section level3">
+<h3>Example</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Calculate the negative log-likelihood for the fitted model</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>log_likelihood_value <span class="ot">&lt;-</span> <span class="fu">J_log_likelihood</span>(X, y, custom_beta)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">print</span>(log_likelihood_value)</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; [1] -361.7227</span></span></code></pre></div>
+</div>
+<div id="comparison-with-loglik-from-glm" class="section level3">
+<h3>Comparison with <code>logLik()</code> from <code>glm()</code></h3>
+<p>We also compare the negative log-likelihood from
+<code>J_log_likelihood()</code> and R’s built-in <code>logLik()</code>
+function.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Calculate the log-likelihood using glm()</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>log_likelihood_glm <span class="ot">&lt;-</span> <span class="fu">logLik</span>(model_glm)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># Compare the negative log-likelihood from custom logistic and glm</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>loglik_accuracy_comparison <span class="ot">&lt;-</span> <span class="fu">all.equal</span>(log_likelihood_value, <span class="fu">as.numeric</span>(log_likelihood_glm), <span class="at">tolerance =</span> <span class="fl">1e-5</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="fu">print</span>(loglik_accuracy_comparison)</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+</div>
+<div id="efficiency-comparison" class="section level2">
+<h2>Efficiency Comparison</h2>
+<p>We benchmark the computation time of both the custom functions and
+the built-in <code>glm()</code> function using
+<code>bench::mark()</code>.</p>
+<div id="benchmarking-j_logistic_fit-vs-glm" class="section level3">
+<h3>Benchmarking <code>J_logistic_fit()</code> vs
+<code>glm()</code></h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Load bench package for benchmarking</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;bench&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;bench&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>}</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="fu">library</span>(bench)</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom logistic regression fit and glm</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>benchmark_results_fit <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_logistic_fit</span>(X, y),</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">unname</span>(<span class="fu">coef</span>(<span class="fu">glm</span>(y <span class="sc">~</span> X, <span class="at">family =</span> binomial))),</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>)</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_fit)</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt; 1 Custom     23.44ms 23.73ms      42.1   28.27MB    169.      2     8     47.5ms</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt; 2 GLM         3.04ms  3.42ms     295.     2.28MB     32.8     9     1     30.5ms</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+</div>
+<div id="benchmarking-j_logistic-vs-predict" class="section level3">
+<h3>Benchmarking <code>J_logistic()</code> vs
+<code>predict()</code></h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom prediction and glm prediction</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>benchmark_results_predict <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_logistic</span>(X, custom_beta),</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">unname</span>(<span class="fu">predict</span>(model_glm, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>)</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_predict)</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom     935.2µs 978.9µs     1024.    60.1KB        0    10     0     9.77ms</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt; 2 GLM         19.3µs  20.2µs    42445.      288B        0    10     0    235.6µs</span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+</div>
+<div id="benchmarking-j_log_likelihood-vs-loglik" class="section level3">
+<h3>Benchmarking <code>J_log_likelihood()</code> vs
+<code>logLik()</code></h3>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom log-likelihood and glm logLik</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>benchmark_results_loglik <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_log_likelihood</span>(X, y, custom_beta),</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">as.numeric</span>(<span class="fu">logLik</span>(model_glm)),</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_loglik)</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom     117.1µs 123.1µs     7802.  102.42KB        0    10     0     1.28ms</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co">#&gt; 2 GLM         21.3µs  24.8µs    34904.    6.09KB        0    10     0    286.5µs</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+</div>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>This vignette provides an overview of the custom logistic regression
+functions available in the <code>Biostat625.HW3.Joey.Junyi.Qiu</code>
+package. The functions allow users to fit a logistic regression model,
+make predictions, and calculate log-likelihood. We also compared the
+accuracy and efficiency of these functions with R’s built-in
+<code>glm()</code> function.</p>
+<div id="accuracy-results" class="section level3">
+<h3>Accuracy Results</h3>
+<ul>
+<li>The <code>all.equal()</code> results help assess whether the
+coefficients, predicted probabilities, and log-likelihood values from
+the custom functions are similar to those obtained from
+<code>glm()</code>. A <code>TRUE</code> result indicates that the models
+are effectively equivalent in terms of these metrics.</li>
+</ul>
+</div>
+<div id="efficiency-results" class="section level3">
+<h3>Efficiency Results</h3>
+<ul>
+<li>The benchmarking results (<code>bench::mark()</code>) show the time
+taken by each function to fit the model, make predictions, and calculate
+log-likelihood, helping assess the computational efficiency of the
+custom implementation compared to <code>glm()</code>.</li>
+</ul>
+<p>The custom functions have exactly the same results as the glm method,
+but the efficiency of custom functions are slower than the glm’s.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

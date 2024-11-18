@@ -1,0 +1,223 @@
+---
+title: "Comparisons_against_the_original_R_functions"
+author: "Joey"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparisons_against_the_original_R_functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Biostat625.HW3.Joey.Junyi.Qiu)
+```
+## Introduction
+
+This vignette provides a comparison between custom logistic regression functions, implemented using Newton's method, and R's built-in logistic regression function (`glm`). Specifically, we will compare:
+
+1. **Accuracy**: Using `all.equal()` to compare the coefficients obtained from the custom functions and `glm`.
+2. **Efficiency**: Benchmarking the computation time using `bench::mark()`.
+
+The custom functions being evaluated include:
+- `J_logistic_fit()`: Fits a logistic regression model using Newton's method.
+- `J_logistic()`: Predicts probabilities using the fitted logistic regression model.
+- `J_log_likelihood()`: Computes the negative log-likelihood for the model.
+
+## Loading Required Packages
+
+We will use the following packages:
+
+- **`Biostat625.HW3.Joey.Junyi.Qiu`**: The custom R package containing logistic regression functions.
+- **`bench`**: For benchmarking computational efficiency.
+
+```{r load-packages}
+# Load required packages
+library(Biostat625.HW3.Joey.Junyi.Qiu)
+if (!requireNamespace("bench", quietly = TRUE)) {
+  install.packages("bench")
+}
+library(bench)
+```
+
+## Dataset
+
+We will use the `PimaIndiansDiabetes` dataset, which has been integrated into our package. This dataset is commonly used for binary classification problems.
+
+```{r load-data}
+# Load the dataset
+# PimaIndiansDiabetes data is included in our package
+data("PimaIndiansDiabetes")
+
+# Prepare feature matrix (X) and target vector (y)
+X <- as.matrix(PimaIndiansDiabetes[, -ncol(PimaIndiansDiabetes)])  # All columns except the last one
+y <- as.numeric(PimaIndiansDiabetes$diabetes == "pos")  # Convert 'pos' to 1 and 'neg' to 0
+```
+
+## `J_logistic_fit()`
+
+### Description
+`J_logistic_fit()` is used to fit a logistic regression model using Newton's method. It calculates the optimal coefficients (including intercept) that best fit the data.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`y`**: A numeric vector of binary outcomes (0 or 1) for each observation.
+- **`iterations`**: An integer representing the maximum number of iterations for Newton's method (default: 1000).
+- **`tol`**: A numeric value representing the convergence tolerance (default: 1e-6).
+
+### Example
+```{r fit-example}
+
+# Fit logistic regression model using custom function
+custom_beta <- J_logistic_fit(X, y)
+print(custom_beta)
+```
+
+### Comparison with `glm()`
+
+We also fit the logistic regression model using R's built-in `glm()` function for comparison.
+
+```{r glm-fit}
+# Fit logistic regression using glm()
+model_glm <- glm(y ~ X, family = binomial)
+# Extract coefficients from the model
+beta_glm <- unname(coef(model_glm))
+print(beta_glm)
+```
+
+We compare the coefficients obtained from `J_logistic_fit()` and `glm()` using `all.equal()`.
+
+```{r accuracy-comparison}
+# Compare the coefficients from custom logistic regression and glm
+coefficients_accuracy_comparison <- all.equal(custom_beta, beta_glm, tolerance = 1e-5)
+print(coefficients_accuracy_comparison)
+```
+
+## `J_logistic()`
+
+### Description
+`J_logistic()` is used to predict probabilities for each observation using a fitted logistic regression model.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`beta`**: A numeric vector of coefficients for the logistic regression model (including intercept).
+
+### Example
+```{r predict-example}
+# Predict probabilities using the fitted model
+predicted_probs <- J_logistic(X, custom_beta)
+print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
+```
+
+### Comparison with `predict()` from `glm()`
+
+We also compare the predicted probabilities from `J_logistic()` and R's built-in `predict()` function.
+
+```{r predict-comparison}
+# Predict probabilities using glm()
+predicted_probs_glm <- unname(predict(model_glm, type = "response"))
+
+# Compare the predicted probabilities from custom logistic and glm
+prob_accuracy_comparison <- all.equal(predicted_probs, predicted_probs_glm, tolerance = 1e-5)
+print(prob_accuracy_comparison)
+```
+
+## `J_log_likelihood()`
+
+### Description
+`J_log_likelihood()` computes the negative log-likelihood for a logistic regression model given the feature matrix, target vector, and model coefficients.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`y`**: A numeric vector of binary outcomes (0 or 1) for each observation.
+- **`beta`**: A numeric vector of regression coefficients (including intercept).
+
+### Example
+```{r loglik-example}
+# Calculate the negative log-likelihood for the fitted model
+log_likelihood_value <- J_log_likelihood(X, y, custom_beta)
+print(log_likelihood_value)
+```
+
+### Comparison with `logLik()` from `glm()`
+
+We also compare the negative log-likelihood from `J_log_likelihood()` and R's built-in `logLik()` function.
+
+```{r loglik-comparison}
+# Calculate the log-likelihood using glm()
+log_likelihood_glm <- logLik(model_glm)
+
+# Compare the negative log-likelihood from custom logistic and glm
+loglik_accuracy_comparison <- all.equal(log_likelihood_value, as.numeric(log_likelihood_glm), tolerance = 1e-5)
+print(loglik_accuracy_comparison)
+```
+
+## Efficiency Comparison
+
+We benchmark the computation time of both the custom functions and the built-in `glm()` function using `bench::mark()`.
+
+### Benchmarking `J_logistic_fit()` vs `glm()`
+
+```{r efficiency-comparison-fit}
+# Load bench package for benchmarking
+if (!requireNamespace("bench", quietly = TRUE)) {
+  install.packages("bench")
+}
+library(bench)
+
+# Benchmark the computation time of custom logistic regression fit and glm
+benchmark_results_fit <- bench::mark(
+  Custom = J_logistic_fit(X, y),
+  GLM = unname(coef(glm(y ~ X, family = binomial))),
+  iterations = 10
+)
+print(benchmark_results_fit)
+```
+
+### Benchmarking `J_logistic()` vs `predict()`
+
+```{r efficiency-comparison-predict}
+# Benchmark the computation time of custom prediction and glm prediction
+benchmark_results_predict <- bench::mark(
+  Custom = J_logistic(X, custom_beta),
+  GLM = unname(predict(model_glm, type = "response")),
+  iterations = 10
+)
+print(benchmark_results_predict)
+```
+
+### Benchmarking `J_log_likelihood()` vs `logLik()`
+
+```{r efficiency-comparison-loglik}
+# Benchmark the computation time of custom log-likelihood and glm logLik
+benchmark_results_loglik <- bench::mark(
+  Custom = J_log_likelihood(X, y, custom_beta),
+  GLM = as.numeric(logLik(model_glm)),
+  iterations = 10
+)
+print(benchmark_results_loglik)
+```
+
+## Summary
+
+This vignette provides an overview of the custom logistic regression functions available in the `Biostat625.HW3.Joey.Junyi.Qiu` package. The functions allow users to fit a logistic regression model, make predictions, and calculate log-likelihood. We also compared the accuracy and efficiency of these functions with R's built-in `glm()` function.
+
+### Accuracy Results
+- The `all.equal()` results help assess whether the coefficients, predicted probabilities, and log-likelihood values from the custom functions are similar to those obtained from `glm()`. A `TRUE` result indicates that the models are effectively equivalent in terms of these metrics.
+
+### Efficiency Results
+- The benchmarking results (`bench::mark()`) show the time taken by each function to fit the model, make predictions, and calculate log-likelihood, helping assess the computational efficiency of the custom implementation compared to `glm()`.
+
+The custom functions have exactly the same results as the glm method, but the efficiency of custom functions are slower than the glm's.
+
+```{r cleanup, include=FALSE}
+# Cleanup - detach loaded packages to avoid conflicts
+detach("package:Biostat625.HW3.Joey.Junyi.Qiu", unload = TRUE)
+detach("package:bench", unload = TRUE)
+```
