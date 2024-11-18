@@ -2,4 +2,6 @@
 
 export(J_log_likelihood)
 export(J_logistic)
+export(J_logistic_cpp)
 export(J_logistic_fit)
+useDynLib(Biostat625.HW3.Joey.Junyi.Qiu, .registration = TRUE)

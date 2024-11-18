@@ -8,7 +8,8 @@
 3. [Functions and Usage](#functions-and-usage)
    - [J_logistic_fit()](#1-j_logistic_fit)
    - [J_logistic()](#2-j_logistic)
-   - [J_log_likelihood()](#3-j_log_likelihood)
+   - [J_logistic_cpp()](#3-j_logistic_cpp)
+   - [J_log_likelihood()](#4-j_log_likelihood)
 4. [Example](#example)
 5. [Testing](#Testing)
 6. [Contributing](#contributing)
@@ -21,7 +22,8 @@
 
 1. **`J_logistic_fit()`**: Fits a logistic regression model using Newton's method.
 2. **`J_logistic()`**: Predicts probabilities using the fitted logistic regression model.
-3. **`J_log_likelihood()`**: Computes the negative log-likelihood for a logistic regression model.
+3. **`J_logistic_cpp()`**: Predicts probabilities using the fitted logistic regression model by c++.
+4. **`J_log_likelihood()`**: Computes the negative log-likelihood for a logistic regression model.
 
 ## Installation
 
@@ -73,8 +75,19 @@ print(fitted_beta)
 predicted_probs <- J_logistic(X, fitted_beta)
 print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
 ```
+### 3. `J_logistic_cpp()`
 
-### 3. `J_log_likelihood()`
+**Description**: Predicts probabilities for each observation using the fitted logistic regression model.
+
+**Usage**:
+
+```r
+# Predict probabilities using the fitted model
+predicted_probs_cpp <- J_logistic_cpp(X, fitted_beta)
+print(predicted_probs_cpp[1:10])  # Print the first 10 predicted probabilities
+```
+
+### 4. `J_log_likelihood()`
 
 **Description**: Computes the negative log-likelihood for a logistic regression model given the feature matrix, target vector, and model coefficients.
 
@@ -109,17 +122,22 @@ fitted_beta <- J_logistic_fit(X, y)
 # Predict probabilities
 predicted_probs <- J_logistic(X, fitted_beta)
 
+# Predict probabilities
+predicted_probs_cpp <- J_logistic_cpp(X, fitted_beta)
+
 # Calculate negative log-likelihood
 log_likelihood_value <- J_log_likelihood(X, y, fitted_beta)
 
 # Print results
 print(fitted_beta)
 print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
+print(predicted_probs_cpp[1:10])  # Print the first 10 predicted probabilities
 print(log_likelihood_value)
 ```
 
 ## Testing
-This R package contains tests for functions and comparisons with the results of the glm() model(original R functions), using the all.equal() and bench::mark() to demonstrate the correctness and the efficiency. And all of them can output the correct results. You can find references in documents such as vignettes.
+This R package contains tests for functions and comparisons with the results of the glm() model(original R functions), using the all.equal() and bench::mark() to demonstrate the correctness and the efficiency. And all of them can output the correct results. You can find references in documents such as vignettes. Moreover, the comparisons of R code with the Rcpp code are also included, showing that Rcpp can improve the efficiency of the same function.
+
 
 ## Contributing
 

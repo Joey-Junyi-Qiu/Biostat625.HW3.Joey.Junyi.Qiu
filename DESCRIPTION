@@ -20,3 +20,6 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+LinkingTo: Rcpp
+Imports: Rcpp
+Config/compile-attributes: true

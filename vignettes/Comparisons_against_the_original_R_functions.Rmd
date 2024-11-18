@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(Biostat625.HW3.Joey.Junyi.Qiu)
+library(Rcpp)
 ```
 ## Introduction
 
@@ -28,6 +29,7 @@ This vignette provides a comparison between custom logistic regression functions
 The custom functions being evaluated include:
 - `J_logistic_fit()`: Fits a logistic regression model using Newton's method.
 - `J_logistic()`: Predicts probabilities using the fitted logistic regression model.
+- `J_logistic_cpp()`: Predicts probabilities using the fitted logistic regression model by C++.
 - `J_log_likelihood()`: Computes the negative log-likelihood for the model.
 
 ## Loading Required Packages
@@ -128,6 +130,36 @@ prob_accuracy_comparison <- all.equal(predicted_probs, predicted_probs_glm, tole
 print(prob_accuracy_comparison)
 ```
 
+
+## `J_logistic_cpp()`
+
+### Description
+`J_logistic_cpp()` is used to predict probabilities for each observation using a fitted logistic regression model by c++.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`beta`**: A numeric vector of coefficients for the logistic regression model (including intercept).
+
+### Example
+```{r predict-example Rcpp}
+# Predict probabilities using the fitted model
+predicted_probs_cpp <- J_logistic_cpp(X, custom_beta)
+print(predicted_probs_cpp[1:10])  # Print the first 10 predicted probabilities
+```
+
+### Comparison with Rcpp from R
+
+We also compare the predicted probabilities from `J_logistic_cpp()` and `J_logistic()` function.
+
+```{r predict-comparison Rcpp}
+
+# Compare the predicted probabilities from custom logistic and glm
+prob_accuracy_comparison_cpp <- all.equal(predicted_probs_cpp, predicted_probs, tolerance = 1e-5)
+print(prob_accuracy_comparison_cpp)
+```
+
+
+
 ## `J_log_likelihood()`
 
 ### Description
@@ -192,6 +224,19 @@ benchmark_results_predict <- bench::mark(
 print(benchmark_results_predict)
 ```
 
+### Benchmarking `J_logistic_cpp()` vs `J_logistic()`
+
+```{r efficiency-comparison-predict Rcpp}
+# Benchmark the computation time of custom R prediction and Rcpp prediction
+benchmark_results_predict_cpp <- bench::mark(
+  Custom_R = J_logistic(X, custom_beta),
+  Custon_Rcpp = J_logistic_cpp(X, custom_beta),
+  iterations = 10
+)
+print(benchmark_results_predict_cpp)
+```
+
+
 ### Benchmarking `J_log_likelihood()` vs `logLik()`
 
 ```{r efficiency-comparison-loglik}
@@ -214,7 +259,9 @@ This vignette provides an overview of the custom logistic regression functions a
 ### Efficiency Results
 - The benchmarking results (`bench::mark()`) show the time taken by each function to fit the model, make predictions, and calculate log-likelihood, helping assess the computational efficiency of the custom implementation compared to `glm()`.
 
-The custom functions have exactly the same results as the glm method, but the efficiency of custom functions are slower than the glm's.
+-The custom functions have exactly the same results as the glm method, but the efficiency of custom functions are slower than the glm's. 
+
+-The custom functions using R is slower than Rcpp, but they have the same memory usage.
 
 ```{r cleanup, include=FALSE}
 # Cleanup - detach loaded packages to avoid conflicts

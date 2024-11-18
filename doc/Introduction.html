@@ -342,7 +342,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Biostat625.HW3.Joey.Junyi.Qiu)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Biostat625.HW3.Joey.Junyi.Qiu)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(Rcpp)</span></code></pre></div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>This vignette provides a detailed introduction to the custom logistic
@@ -361,6 +362,8 @@ include:</p>
 using Newton’s method.</li>
 <li><code>J_logistic()</code>: Predicts probabilities using the fitted
 logistic regression model.</li>
+<li><code>J_logistic_cpp()</code>: Predicts probabilities using the
+fitted logistic regression model through c++.</li>
 <li><code>J_log_likelihood()</code>: Computes the negative
 log-likelihood for a logistic regression model.</li>
 </ol>
@@ -431,15 +434,41 @@ for the logistic regression model (including intercept).</li>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt;  [7] 0.06657752 0.64456958 0.70935795 0.03633584</span></span></code></pre></div>
 </div>
 </div>
+<div id="j_logistic_cpp" class="section level2">
+<h2><code>J_logistic_cpp()</code></h2>
+<div id="description-2" class="section level3">
+<h3>Description</h3>
+<p><code>J_logistic_cpp()</code> is used to predict probabilities for
+each observation using a fitted logistic regression model through
+c++.</p>
+</div>
+<div id="parameters-2" class="section level3">
+<h3>Parameters</h3>
+<ul>
+<li><strong><code>X</code></strong>: A numeric matrix where each row
+represents an observation and each column represents a feature.</li>
+<li><strong><code>beta</code></strong>: A numeric vector of coefficients
+for the logistic regression model (including intercept).</li>
+</ul>
+</div>
+<div id="example-2" class="section level3">
+<h3>Example</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Predict probabilities using the fitted model</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>predicted_probs <span class="ot">&lt;-</span> <span class="fu">J_logistic_cpp</span>(X, fitted_beta)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">print</span>(predicted_probs[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])  <span class="co"># Print the first 10 predicted probabilities</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;  [1] 0.72172655 0.04864161 0.79670208 0.04162486 0.90218390 0.14663156</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;  [7] 0.06657752 0.64456958 0.70935795 0.03633584</span></span></code></pre></div>
+</div>
+</div>
 <div id="j_log_likelihood" class="section level2">
 <h2><code>J_log_likelihood()</code></h2>
-<div id="description-2" class="section level3">
+<div id="description-3" class="section level3">
 <h3>Description</h3>
 <p><code>J_log_likelihood()</code> computes the negative log-likelihood
 for a logistic regression model given the feature matrix, target vector,
 and model coefficients.</p>
 </div>
-<div id="parameters-2" class="section level3">
+<div id="parameters-3" class="section level3">
 <h3>Parameters</h3>
 <ul>
 <li><strong><code>X</code></strong>: A numeric matrix where each row
@@ -450,12 +479,12 @@ represents an observation and each column represents a feature.</li>
 coefficients (including intercept).</li>
 </ul>
 </div>
-<div id="example-2" class="section level3">
+<div id="example-3" class="section level3">
 <h3>Example</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Calculate the negative log-likelihood for the fitted model</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>log_likelihood_value <span class="ot">&lt;-</span> <span class="fu">J_log_likelihood</span>(X, y, fitted_beta)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">print</span>(log_likelihood_value)</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; [1] -361.7227</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Calculate the negative log-likelihood for the fitted model</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>log_likelihood_value <span class="ot">&lt;-</span> <span class="fu">J_log_likelihood</span>(X, y, fitted_beta)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">print</span>(log_likelihood_value)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#&gt; [1] -361.7227</span></span></code></pre></div>
 </div>
 </div>
 <div id="summary" class="section level2">

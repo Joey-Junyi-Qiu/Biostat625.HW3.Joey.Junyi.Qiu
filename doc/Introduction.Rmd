@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(Biostat625.HW3.Joey.Junyi.Qiu)
+library(Rcpp)
 ```
 
 ## Introduction
@@ -29,7 +30,9 @@ The custom logistic regression functions available in the package include:
 
 1. `J_logistic_fit()`: Fits a logistic regression model using Newton's method.
 2. `J_logistic()`: Predicts probabilities using the fitted logistic regression model.
-3. `J_log_likelihood()`: Computes the negative log-likelihood for a logistic regression model.
+3. `J_logistic_cpp()`: Predicts probabilities using the fitted logistic regression model through c++.
+4. `J_log_likelihood()`: Computes the negative log-likelihood for a logistic regression model.
+
 
 Below, we describe each of these functions in detail.
 
@@ -76,6 +79,23 @@ predicted_probs <- J_logistic(X, fitted_beta)
 print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
 ```
 
+## `J_logistic_cpp()`
+
+### Description
+`J_logistic_cpp()` is used to predict probabilities for each observation using a fitted logistic regression model through c++.
+
+### Parameters
+- **`X`**: A numeric matrix where each row represents an observation and each column represents a feature.
+- **`beta`**: A numeric vector of coefficients for the logistic regression model (including intercept).
+
+### Example
+```{r predict-example Rcpp}
+# Predict probabilities using the fitted model
+predicted_probs <- J_logistic_cpp(X, fitted_beta)
+print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
+```
+
+
 ## `J_log_likelihood()`
 
 ### Description
@@ -92,6 +112,7 @@ print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
 log_likelihood_value <- J_log_likelihood(X, y, fitted_beta)
 print(log_likelihood_value)
 ```
+
 
 ## Summary
 

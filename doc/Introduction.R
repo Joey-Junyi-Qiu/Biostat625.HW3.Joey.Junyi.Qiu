@@ -6,6 +6,7 @@ knitr::opts_chunk$set(
 
 ## ----setup--------------------------------------------------------------------
 library(Biostat625.HW3.Joey.Junyi.Qiu)
+library(Rcpp)
 
 ## ----fit-example--------------------------------------------------------------
 
@@ -24,6 +25,11 @@ print(fitted_beta)
 ## ----predict-example----------------------------------------------------------
 # Predict probabilities using the fitted model
 predicted_probs <- J_logistic(X, fitted_beta)
+print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
+
+## ----predict-example Rcpp-----------------------------------------------------
+# Predict probabilities using the fitted model
+predicted_probs <- J_logistic_cpp(X, fitted_beta)
 print(predicted_probs[1:10])  # Print the first 10 predicted probabilities
 
 ## ----loglik-example-----------------------------------------------------------

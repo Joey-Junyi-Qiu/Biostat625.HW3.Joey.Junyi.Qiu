@@ -342,7 +342,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Biostat625.HW3.Joey.Junyi.Qiu)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(Biostat625.HW3.Joey.Junyi.Qiu)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(Rcpp)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;Rcpp&#39; was built under R version 4.4.2</span></span></code></pre></div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>This vignette provides a comparison between custom logistic
@@ -360,8 +362,9 @@ the coefficients obtained from the custom functions and
 <code>J_logistic_fit()</code>: Fits a logistic regression model using
 Newton’s method. - <code>J_logistic()</code>: Predicts probabilities
 using the fitted logistic regression model. -
-<code>J_log_likelihood()</code>: Computes the negative log-likelihood
-for the model.</p>
+<code>J_logistic_cpp()</code>: Predicts probabilities using the fitted
+logistic regression model by C++. - <code>J_log_likelihood()</code>:
+Computes the negative log-likelihood for the model.</p>
 </div>
 <div id="loading-required-packages" class="section level2">
 <h2>Loading Required Packages</h2>
@@ -482,15 +485,51 @@ function.</p>
 <span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 </div>
+<div id="j_logistic_cpp" class="section level2">
+<h2><code>J_logistic_cpp()</code></h2>
+<div id="description-2" class="section level3">
+<h3>Description</h3>
+<p><code>J_logistic_cpp()</code> is used to predict probabilities for
+each observation using a fitted logistic regression model by c++.</p>
+</div>
+<div id="parameters-2" class="section level3">
+<h3>Parameters</h3>
+<ul>
+<li><strong><code>X</code></strong>: A numeric matrix where each row
+represents an observation and each column represents a feature.</li>
+<li><strong><code>beta</code></strong>: A numeric vector of coefficients
+for the logistic regression model (including intercept).</li>
+</ul>
+</div>
+<div id="example-2" class="section level3">
+<h3>Example</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Predict probabilities using the fitted model</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>predicted_probs_cpp <span class="ot">&lt;-</span> <span class="fu">J_logistic_cpp</span>(X, custom_beta)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">print</span>(predicted_probs_cpp[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])  <span class="co"># Print the first 10 predicted probabilities</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt;  [1] 0.72172655 0.04864161 0.79670208 0.04162486 0.90218390 0.14663156</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt;  [7] 0.06657752 0.64456958 0.70935795 0.03633584</span></span></code></pre></div>
+</div>
+<div id="comparison-with-rcpp-from-r" class="section level3">
+<h3>Comparison with Rcpp from R</h3>
+<p>We also compare the predicted probabilities from
+<code>J_logistic_cpp()</code> and <code>J_logistic()</code>
+function.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co"># Compare the predicted probabilities from custom logistic and glm</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>prob_accuracy_comparison_cpp <span class="ot">&lt;-</span> <span class="fu">all.equal</span>(predicted_probs_cpp, predicted_probs, <span class="at">tolerance =</span> <span class="fl">1e-5</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="fu">print</span>(prob_accuracy_comparison_cpp)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
+</div>
 <div id="j_log_likelihood" class="section level2">
 <h2><code>J_log_likelihood()</code></h2>
-<div id="description-2" class="section level3">
+<div id="description-3" class="section level3">
 <h3>Description</h3>
 <p><code>J_log_likelihood()</code> computes the negative log-likelihood
 for a logistic regression model given the feature matrix, target vector,
 and model coefficients.</p>
 </div>
-<div id="parameters-2" class="section level3">
+<div id="parameters-3" class="section level3">
 <h3>Parameters</h3>
 <ul>
 <li><strong><code>X</code></strong>: A numeric matrix where each row
@@ -501,25 +540,25 @@ represents an observation and each column represents a feature.</li>
 coefficients (including intercept).</li>
 </ul>
 </div>
-<div id="example-2" class="section level3">
+<div id="example-3" class="section level3">
 <h3>Example</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Calculate the negative log-likelihood for the fitted model</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>log_likelihood_value <span class="ot">&lt;-</span> <span class="fu">J_log_likelihood</span>(X, y, custom_beta)</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">print</span>(log_likelihood_value)</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; [1] -361.7227</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Calculate the negative log-likelihood for the fitted model</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>log_likelihood_value <span class="ot">&lt;-</span> <span class="fu">J_log_likelihood</span>(X, y, custom_beta)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">print</span>(log_likelihood_value)</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; [1] -361.7227</span></span></code></pre></div>
 </div>
 <div id="comparison-with-loglik-from-glm" class="section level3">
 <h3>Comparison with <code>logLik()</code> from <code>glm()</code></h3>
 <p>We also compare the negative log-likelihood from
 <code>J_log_likelihood()</code> and R’s built-in <code>logLik()</code>
 function.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Calculate the log-likelihood using glm()</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>log_likelihood_glm <span class="ot">&lt;-</span> <span class="fu">logLik</span>(model_glm)</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># Compare the negative log-likelihood from custom logistic and glm</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>loglik_accuracy_comparison <span class="ot">&lt;-</span> <span class="fu">all.equal</span>(log_likelihood_value, <span class="fu">as.numeric</span>(log_likelihood_glm), <span class="at">tolerance =</span> <span class="fl">1e-5</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="fu">print</span>(loglik_accuracy_comparison)</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Calculate the log-likelihood using glm()</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>log_likelihood_glm <span class="ot">&lt;-</span> <span class="fu">logLik</span>(model_glm)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co"># Compare the negative log-likelihood from custom logistic and glm</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>loglik_accuracy_comparison <span class="ot">&lt;-</span> <span class="fu">all.equal</span>(log_likelihood_value, <span class="fu">as.numeric</span>(log_likelihood_glm), <span class="at">tolerance =</span> <span class="fl">1e-5</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="fu">print</span>(loglik_accuracy_comparison)</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 </div>
 <div id="efficiency-comparison" class="section level2">
@@ -530,59 +569,76 @@ the built-in <code>glm()</code> function using
 <div id="benchmarking-j_logistic_fit-vs-glm" class="section level3">
 <h3>Benchmarking <code>J_logistic_fit()</code> vs
 <code>glm()</code></h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Load bench package for benchmarking</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;bench&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;bench&quot;</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>}</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="fu">library</span>(bench)</span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom logistic regression fit and glm</span></span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>benchmark_results_fit <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_logistic_fit</span>(X, y),</span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">unname</span>(<span class="fu">coef</span>(<span class="fu">glm</span>(y <span class="sc">~</span> X, <span class="at">family =</span> binomial))),</span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
-<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>)</span>
-<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_fit)</span>
-<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
-<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
-<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
-<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt; 1 Custom     23.44ms 23.73ms      42.1   28.27MB    169.      2     8     47.5ms</span></span>
-<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt; 2 GLM         3.04ms  3.42ms     295.     2.28MB     32.8     9     1     30.5ms</span></span>
-<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Load bench package for benchmarking</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;bench&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;bench&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>}</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">library</span>(bench)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom logistic regression fit and glm</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>benchmark_results_fit <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_logistic_fit</span>(X, y),</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">unname</span>(<span class="fu">coef</span>(<span class="fu">glm</span>(y <span class="sc">~</span> X, <span class="at">family =</span> binomial))),</span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>)</span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_fit)</span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co">#&gt; 1 Custom     22.99ms 23.25ms      43.0   28.27MB    194.      2     9     46.5ms</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a><span class="co">#&gt; 2 GLM         3.02ms  3.29ms     304.     2.28MB     75.9     8     2     26.4ms</span></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
 </div>
 <div id="benchmarking-j_logistic-vs-predict" class="section level3">
 <h3>Benchmarking <code>J_logistic()</code> vs
 <code>predict()</code></h3>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom prediction and glm prediction</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>benchmark_results_predict <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_logistic</span>(X, custom_beta),</span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">unname</span>(<span class="fu">predict</span>(model_glm, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>)</span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_predict)</span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom     935.2µs 978.9µs     1024.    60.1KB        0    10     0     9.77ms</span></span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a><span class="co">#&gt; 2 GLM         19.3µs  20.2µs    42445.      288B        0    10     0    235.6µs</span></span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom prediction and glm prediction</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>benchmark_results_predict <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_logistic</span>(X, custom_beta),</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">unname</span>(<span class="fu">predict</span>(model_glm, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)),</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_predict)</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom       914µs 951.1µs     1049.    60.1KB        0    10     0     9.53ms</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt; 2 GLM           19µs  19.8µs    42194.      288B        0    10     0      237µs</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+</div>
+<div id="benchmarking-j_logistic_cpp-vs-j_logistic" class="section level3">
+<h3>Benchmarking <code>J_logistic_cpp()</code> vs
+<code>J_logistic()</code></h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom R prediction and Rcpp prediction</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>benchmark_results_predict_cpp <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="at">Custom_R =</span> <span class="fu">J_logistic</span>(X, custom_beta),</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="at">Custon_Rcpp =</span> <span class="fu">J_logistic_cpp</span>(X, custom_beta),</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>)</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_predict_cpp)</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt;  &lt;bch:&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom_R     873µs 888.1µs     1109.    60.1KB        0    10     0     9.02ms</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 2 Custon_Rcpp   46µs  49.2µs    18896.    60.1KB        0    10     0    529.2µs</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
 </div>
 <div id="benchmarking-j_log_likelihood-vs-loglik" class="section level3">
 <h3>Benchmarking <code>J_log_likelihood()</code> vs
 <code>logLik()</code></h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom log-likelihood and glm logLik</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>benchmark_results_loglik <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_log_likelihood</span>(X, y, custom_beta),</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">as.numeric</span>(<span class="fu">logLik</span>(model_glm)),</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>)</span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_loglik)</span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom     117.1µs 123.1µs     7802.  102.42KB        0    10     0     1.28ms</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co">#&gt; 2 GLM         21.3µs  24.8µs    34904.    6.09KB        0    10     0    286.5µs</span></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Benchmark the computation time of custom log-likelihood and glm logLik</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>benchmark_results_loglik <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">Custom =</span> <span class="fu">J_log_likelihood</span>(X, y, custom_beta),</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="at">GLM =</span> <span class="fu">as.numeric</span>(<span class="fu">logLik</span>(model_glm)),</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="fu">print</span>(benchmark_results_loglik)</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 13</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt;   expression     min  median `itr/sec` mem_alloc `gc/sec` n_itr  n_gc total_time</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt;   &lt;bch:expr&gt; &lt;bch:t&gt; &lt;bch:t&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;bch:tm&gt;</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt; 1 Custom     129.1µs 135.1µs     7078.  102.42KB        0    10     0     1.41ms</span></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt; 2 GLM         19.7µs  20.8µs    41135.    6.09KB        0    10     0    243.1µs</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: result &lt;list&gt;, memory &lt;list&gt;, time &lt;list&gt;, gc &lt;list&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div id="summary" class="section level2">
@@ -611,8 +667,11 @@ taken by each function to fit the model, make predictions, and calculate
 log-likelihood, helping assess the computational efficiency of the
 custom implementation compared to <code>glm()</code>.</li>
 </ul>
-<p>The custom functions have exactly the same results as the glm method,
-but the efficiency of custom functions are slower than the glm’s.</p>
+<p>-The custom functions have exactly the same results as the glm
+method, but the efficiency of custom functions are slower than the
+glm’s.</p>
+<p>-The custom functions using R is slower than Rcpp, but they have the
+same memory usage.</p>
 </div>
 </div>
 

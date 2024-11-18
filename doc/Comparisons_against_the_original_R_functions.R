@@ -6,6 +6,7 @@ knitr::opts_chunk$set(
 
 ## ----setup--------------------------------------------------------------------
 library(Biostat625.HW3.Joey.Junyi.Qiu)
+library(Rcpp)
 
 ## ----load-packages------------------------------------------------------------
 # Load required packages
@@ -55,6 +56,17 @@ predicted_probs_glm <- unname(predict(model_glm, type = "response"))
 prob_accuracy_comparison <- all.equal(predicted_probs, predicted_probs_glm, tolerance = 1e-5)
 print(prob_accuracy_comparison)
 
+## ----predict-example Rcpp-----------------------------------------------------
+# Predict probabilities using the fitted model
+predicted_probs_cpp <- J_logistic_cpp(X, custom_beta)
+print(predicted_probs_cpp[1:10])  # Print the first 10 predicted probabilities
+
+## ----predict-comparison Rcpp--------------------------------------------------
+
+# Compare the predicted probabilities from custom logistic and glm
+prob_accuracy_comparison_cpp <- all.equal(predicted_probs_cpp, predicted_probs, tolerance = 1e-5)
+print(prob_accuracy_comparison_cpp)
+
 ## ----loglik-example-----------------------------------------------------------
 # Calculate the negative log-likelihood for the fitted model
 log_likelihood_value <- J_log_likelihood(X, y, custom_beta)
@@ -91,6 +103,15 @@ benchmark_results_predict <- bench::mark(
   iterations = 10
 )
 print(benchmark_results_predict)
+
+## ----efficiency-comparison-predict Rcpp---------------------------------------
+# Benchmark the computation time of custom R prediction and Rcpp prediction
+benchmark_results_predict_cpp <- bench::mark(
+  Custom_R = J_logistic(X, custom_beta),
+  Custon_Rcpp = J_logistic_cpp(X, custom_beta),
+  iterations = 10
+)
+print(benchmark_results_predict_cpp)
 
 ## ----efficiency-comparison-loglik---------------------------------------------
 # Benchmark the computation time of custom log-likelihood and glm logLik
