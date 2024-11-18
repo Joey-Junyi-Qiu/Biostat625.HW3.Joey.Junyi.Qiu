@@ -14,3 +14,9 @@ URL: https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu
 BugReports: https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    rmarkdown,
+    bench,
+    mlbench
+VignetteBuilder: knitr

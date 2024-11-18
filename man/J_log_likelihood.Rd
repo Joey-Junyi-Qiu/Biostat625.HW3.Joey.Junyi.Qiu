@@ -19,3 +19,10 @@ The negative log-likelihood value.
 \description{
 This function computes the negative log-likelihood for a logistic regression model.
 }
+\examples{
+X <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, byrow = TRUE)
+y <- c(1, 0, 1)
+beta <- c(0.5, -0.2)
+J_log_likelihood(X, y, beta)
+#The result for this example: -1.988591
+}

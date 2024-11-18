@@ -2,3 +2,4 @@
 
 export(J_log_likelihood)
 export(J_logistic)
+export(J_logistic_fit)

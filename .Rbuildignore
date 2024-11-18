@@ -15,3 +15,5 @@
 ^NEWS\.md$
 ^\.vscode$
 ^\.Rproj\.user$
+^doc$
+^Meta$
