@@ -18,6 +18,8 @@
 
 ## Overview
 
+[![R-CMD-check.yaml](https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Joey-Junyi-Qiu/Biostat625.HW3.Joey.Junyi.Qiu/actions/workflows/R-CMD-check.yaml)
+
 `Biostat625.HW3.Joey.Junyi.Qiu` is an R package that provides custom logistic regression functions. The package includes the following key functions:
 
 1. **`J_logistic_fit()`**: Fits a logistic regression model using Newton's method.
